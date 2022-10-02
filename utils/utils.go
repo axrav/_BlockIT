@@ -42,7 +42,7 @@ func (bl *Block) ValidateHash(hash string) bool {
 	bl.GenerateHash()
 	return bl.Hash == hash
 }
-func (b Blockchain) AddBlock(s *SampleData) {
+func (b *Blockchain) AddBlock(s *SampleData) {
 	lastBlock := b.Blocks[len(b.Blocks)-1]
 	lastHash := lastBlock.Hash
 	newBlock := NewBlock(s, lastBlock)
@@ -53,6 +53,13 @@ func (b Blockchain) AddBlock(s *SampleData) {
 
 	}
 
+}
+
+func (b *Blockchain) Background() {
+	for _, block := range b.Blocks {
+		bytes, _ := json.MarshalIndent(block.Data, "", " ")
+		fmt.Printf("PrevHash: %s\nData:%s\nHash: %s\nTimestamp: %s", block.PrevHash, string(bytes), block.Hash, block.TimeStamp)
+	}
 }
 
 type SampleData struct {
@@ -67,8 +74,7 @@ func FirstBlock() *Block {
 
 }
 
-var NewBlockchain Blockchain = Blockchain{[]*Block{FirstBlock()}}
-
 func CurrentBlock() *Blockchain {
+	NewBlockchain := Blockchain{[]*Block{FirstBlock()}}
 	return &NewBlockchain
 }
